@@ -1,0 +1,14 @@
+boto3
+pytz
+requests
+meinheld
+gunicorn
+Django
+mysqlclient
+redis
+django-redis
+django-cors-headers
+django-extensions
+Werkzeug
+git+https://github.com/ojos/python-core
+git+https://github.com/ojos/python-ca

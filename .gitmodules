@@ -1,0 +1,6 @@
+[submodule "src/python-core"]
+	path = src/python-core
+	url = git@github.com.ojos:ojos/python-core.git
+[submodule "src/python-ca"]
+	path = src/python-ca
+	url = git@github.com.ojos:ojos/python-ca.git

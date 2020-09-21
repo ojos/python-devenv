@@ -1,0 +1,109 @@
+version: "3"
+services:
+  db:
+    image: ojos/mysql:aurora2
+    container_name: ojos-python.db
+    user: "1000:1000"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: ojos
+      MYSQL_PASSWORD: ojos
+      MYSQL_DATABASE: ojos
+      TZ: Asia/Tokyo
+    ports:
+      - 3306:3306
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "512m"
+        max-file: "3"
+    volumes:
+      - ../etc/mysql/mysql.conf.d:/etc/mysql/mysql.conf.d
+      - ../tmp/db:/var/lib/mysql
+  cache:
+    image: ojos/redis:latest
+    container_name: ojos-python.cache
+    user: "1000:1000"
+    ports:
+      - 6379:6379
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "512m"
+        max-file: "3"
+    volumes:
+      - ../tmp/cache:/data
+      - ../etc/redis:/usr/local/etc/redis
+  fastapi:
+    build:
+      context: ../src/fastapi
+      dockerfile: Dockerfile
+    image: ojos-python.fastapi
+    container_name: ojos-python.fastapi
+    command: /run.sh
+    environment:
+      APP_ENV: local
+      MYSQL_PRIMARY_HOST: ojos-python.db
+      MYSQL_REPLICA_HOST: ojos-python.db
+      MYSQL_USER: ojos
+      MYSQL_PASSWORD: ojos
+      MYSQL_DATABASE: ojos
+      CACHE_HOST: ojos-python.cache
+    # expose:
+    #   - 8000
+    ports:
+      - 8000:8000
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "512m"
+        max-file: "3"
+    # volumes:
+    #   - ../src/fastapi/src:/app
+    depends_on:
+      - db
+      - cache
+  django:
+    build:
+      context: ../src/django
+      dockerfile: Dockerfile
+    image: ojos-python.django
+    container_name: ojos-python.django
+    command: /run.sh
+    environment:
+      APP_ENV: local
+      MYSQL_PRIMARY_HOST: ojos-python.db
+      MYSQL_REPLICA_HOST: ojos-python.db
+      MYSQL_USER: ojos
+      MYSQL_PASSWORD: ojos
+      MYSQL_DATABASE: ojos
+      CACHE_HOST: ojos-python.cache
+    expose:
+      - 8000
+    # ports:
+    #   - 8000:8000
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "512m"
+        max-file: "3"
+    # volumes:
+    #   - ../src/django/src:/app
+    depends_on:
+      - db
+      - cache
+  reverseproxy:
+    image: nginx:mainline-alpine
+    container_name: ojos-python.reverseproxy
+    ports:
+      - 80:80
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "512m"
+        max-file: "3"
+    volumes:
+      - ../etc/nginx/conf.d:/etc/nginx/conf.d
+      - ../src/django/src/static:/usr/share/nginx/html/static
+    depends_on:
+      - django

@@ -1,0 +1,69 @@
+// For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.101.0/containers/python-3
+{
+  "name": "ojos-python",
+  "context": ".",
+  "dockerComposeFile": [
+    "docker-compose.yml",
+    "docker-compose.extend.yml"
+  ],
+  "service": "dev",
+  "workspaceFolder": "/workspaces",
+  "shutdownAction": "stopCompose",
+  // Set *default* container specific settings.json values on container create.
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash",
+    "terminal.integrated.env.linux": {
+      "PYTHONPATH": "/workspaces/src/fastapi/src:/workspaces/src/django/src:/workspaces/src/python-core:/workspaces/src/python-ca:${env:PYTHONPATH}",
+      "PATH": "/workspaces/sbin:${env:PATH}"
+    },
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "python.pythonPath": "/usr/local/bin/python",
+    "python.analysis.extraPaths": [
+      "/workspaces/src/fastapi/src",
+      "/workspaces/src/django/src",
+      "/workspaces/src/python-core",
+      "/workspaces/src/python-ca"
+    ],
+    "[python]": {
+      "editor.insertSpaces": true,
+      "editor.detectIndentation": true,
+      "editor.tabSize": 4,
+      "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+      }
+    },
+    "python.linting.enabled": true,
+    "python.linting.lintOnSave": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.mypyEnabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Args": [
+      "--max-line-length=120",
+      "--max-complexity",
+      "20"
+    ],
+    "python.formatting.provider": "black",
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": false
+  },
+  // Add the IDs of extensions you want installed when the container is created.
+  "extensions": [
+    "oderwat.indent-rainbow",
+    "VisualStudioExptTeam.vscodeintellicode",
+    "aliariff.auto-add-brackets",
+    "hashicorp.terraform",
+    "ms-azuretools.vscode-docker",
+    "ms-python.vscode-pylance"
+  ],
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  "forwardPorts": [
+    8080,
+    8081
+  ],
+  // Use 'postCreateCommand' to run commands after the container is created.
+  // "postCreateCommand": "yarn install",
+  // Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "vscode"
+}

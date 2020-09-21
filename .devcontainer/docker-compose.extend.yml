@@ -1,0 +1,21 @@
+version: '3'
+services:
+  dev:
+    build:
+      context:    .
+      dockerfile: Dockerfile
+    image: ojos-python/dev
+    container_name: ojos-python.dev
+    environment:
+      PROJECT_NAME:  ojos-python
+      APP_ENV:       local-dev
+      PYTHONSTARTUP: /workspaces/.pystartup
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/.ssh:/home/vscode/.ssh
+      - ~/.gitconfig:/home/vscode/.gitconfig
+      - ../:/workspaces
+    ports:
+      - 8080:8080
+      - 8081:8081
+    command: sleep infinity

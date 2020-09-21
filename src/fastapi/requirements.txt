@@ -1,0 +1,14 @@
+boto3
+pytz
+requests
+gunicorn
+git+https://github.com/ojos/python-core
+git+https://github.com/ojos/python-ca
+fastapi
+uvicorn
+sqlalchemy
+orjson
+pydantic
+databases[mysql]
+aioredis
+ipython
